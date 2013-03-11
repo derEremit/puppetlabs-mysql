@@ -1,0 +1,22 @@
+#! /bin/bash
+sqlpid="/var/run/mysqld/mysqld.pid"
+if [ -f "$sqlpid" ]; then
+  service mysql stop
+  sqlstart=1
+fi
+
+sudo mkdir -p /var/lib/.mysql
+touch /var/lib/mysql/ib_logfile0
+rm -r /var/lib/mysql/ib_logfile0
+touch /var/lib/mysql/ib_logfile1
+rm -r /var/lib/mysql/ib_logfile1
+touch /var/lib/mysql/ib_logfile2
+rm -r /var/lib/mysql/ib_logfile2
+rsync -a --delete /var/lib/mysql/ /var/lib/.mysql
+rm -r /var/lib/mysql/*
+chown mysql:mysql -R /var/lib/.mysql
+
+if [[ $sqlstart -eq 1 ]]; then 
+  service mysql start
+fi
+

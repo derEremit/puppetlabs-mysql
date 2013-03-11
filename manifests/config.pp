@@ -137,5 +137,21 @@ class mysql::config(
     content => template('mysql/my.cnf.erb'),
     mode    => '0644',
   }
-
+  file { "/etc/init/mysql.conf":
+        ensure => "file",
+        source => "puppet:///modules/mysql/mysql-init.conf",
+        owner => "root",
+        group => "root",
+        mode => 644,
+        require => [ File[ "/tmp/sqlramdisk"], Package["drupalbuntu-lamp-config"]],
+  }
+  file { "/etc/mysql/conf.d/innodb.cnf":
+        ensure => "file",
+        source => "puppet:///modules/mysql/innodb.cnf",
+        owner => "root",
+        group => "root",
+        mode => 644,
+        require => [ Package["drupalbuntu-lamp-config"]],
+        notify => File [ "/tmp/dellog" ],
+    }
 }
